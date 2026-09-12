@@ -1,1357 +1,169 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>HackPulse — Delhi Developer Radar</title>
-
-  <meta
-    name="description"
-    content="HackPulse is a developer event radar for hackathons, coding competitions, AI events, workshops and tech meetups."
-  />
-
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      --bg: #050711;
-      --bg2: #090d1b;
-      --card: rgba(14, 19, 38, 0.72);
-      --border: rgba(255, 255, 255, 0.09);
-      --text: #f5f7ff;
-      --muted: #98a1bd;
-      --purple: #8b5cf6;
-      --cyan: #22d3ee;
-      --pink: #ec4899;
-      --green: #34d399;
-      --orange: #fb923c;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-height: 100vh;
-      font-family:
-        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at 15% 10%, rgba(139, 92, 246, 0.18), transparent 28%),
-        radial-gradient(circle at 85% 15%, rgba(34, 211, 238, 0.12), transparent 24%),
-        radial-gradient(circle at 50% 90%, rgba(236, 72, 153, 0.08), transparent 28%),
-        var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-      background-size: 42px 42px;
-      mask-image: linear-gradient(to bottom, black, transparent 92%);
-      z-index: -2;
-    }
-
-    .glow {
-      position: fixed;
-      width: 450px;
-      height: 450px;
-      border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0.11;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .glow.one {
-      background: var(--purple);
-      top: -180px;
-      left: -180px;
-    }
-
-    .glow.two {
-      background: var(--cyan);
-      right: -190px;
-      top: 180px;
-    }
-
-    .container {
-      width: min(1180px, 92%);
-      margin: auto;
-    }
-
-    /* NAVBAR */
-
-    nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(20px);
-      background: rgba(5, 7, 17, 0.72);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .nav-inner {
-      height: 74px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      font-size: 1.25rem;
-    }
-
-    .logo-mark {
-      width: 34px;
-      height: 34px;
-      display: grid;
-      place-items: center;
-      border-radius: 11px;
-      background: linear-gradient(135deg, var(--purple), var(--cyan));
-      box-shadow: 0 0 32px rgba(139, 92, 246, 0.4);
-    }
-
-    .logo span {
-      background: linear-gradient(90deg, #fff, #b4c4ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 24px;
-    }
-
-    .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: 0.2s;
-    }
-
-    .nav-links a:hover {
-      color: #fff;
-    }
-
-    .live-pill {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 8px 12px;
-      border-radius: 100px;
-      border: 1px solid rgba(52,211,153,.18);
-      background: rgba(52,211,153,.07);
-      color: #80f4c0;
-      font-size: .78rem;
-      font-weight: 700;
-    }
-
-    .live-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 12px var(--green);
-      animation: pulse 1.6s infinite;
-    }
-
-    @keyframes pulse {
-      50% {
-        opacity: .35;
-        transform: scale(.7);
-      }
-    }
-
-    /* HERO */
-
-    .hero {
-      padding: 105px 0 80px;
-      text-align: center;
-      position: relative;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      padding: 8px 14px;
-      border-radius: 100px;
-      border: 1px solid rgba(139, 92, 246, 0.25);
-      background: rgba(139, 92, 246, 0.08);
-      color: #c8b7ff;
-      font-size: 0.78rem;
-      font-weight: 700;
-      margin-bottom: 22px;
-    }
-
-    .hero h1 {
-      max-width: 850px;
-      margin: auto;
-      font-size: clamp(3rem, 8vw, 6.7rem);
-      line-height: .92;
-      letter-spacing: -0.07em;
-      font-weight: 950;
-    }
-
-    .hero h1 span {
-      background: linear-gradient(
-        100deg,
-        #ffffff 10%,
-        #ad8cff 42%,
-        #3ee6f8 75%,
-        #fff 95%
-      );
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-size: 250% auto;
-      animation: gradientMove 5s linear infinite;
-    }
-
-    @keyframes gradientMove {
-      to {
-        background-position: 250% center;
-      }
-    }
-
-    .hero p {
-      max-width: 690px;
-      margin: 26px auto 0;
-      color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.7;
-    }
-
-    .hero-actions {
-      margin-top: 34px;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .btn {
-      border: 0;
-      cursor: pointer;
-      border-radius: 14px;
-      padding: 13px 18px;
-      font-weight: 800;
-      font-size: .9rem;
-      transition: .2s;
-      color: white;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--purple), #6d45e9);
-      box-shadow: 0 15px 35px rgba(139,92,246,.23);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 20px 45px rgba(139,92,246,.35);
-    }
-
-    .btn-secondary {
-      background: rgba(255,255,255,.04);
-      border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255,255,255,.08);
-    }
-
-    /* RADAR */
-
-    .radar-wrap {
-      margin-top: 50px;
-      display: grid;
-      place-items: center;
-    }
-
-    .radar {
-      position: relative;
-      width: min(640px, 90vw);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle, rgba(34,211,238,.08), transparent 44%),
-        rgba(255,255,255,.015);
-      border: 1px solid rgba(34,211,238,.14);
-      box-shadow:
-        inset 0 0 70px rgba(34,211,238,.05),
-        0 0 80px rgba(34,211,238,.04);
-      overflow: hidden;
-    }
-
-    .radar::before,
-    .radar::after {
-      content: "";
-      position: absolute;
-      inset: 15%;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,.08);
-    }
-
-    .radar::after {
-      inset: 30%;
-    }
-
-    .cross-x,
-    .cross-y {
-      position: absolute;
-      background: rgba(255,255,255,.07);
-    }
-
-    .cross-x {
-      left: 0;
-      right: 0;
-      top: 50%;
-      height: 1px;
-    }
-
-    .cross-y {
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      width: 1px;
-    }
-
-    .sweep {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 50%;
-      height: 2px;
-      transform-origin: left center;
-      background: linear-gradient(90deg, rgba(34,211,238,.8), transparent);
-      animation: sweep 4s linear infinite;
-      box-shadow: 0 0 18px rgba(34,211,238,.65);
-    }
-
-    @keyframes sweep {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .radar-center {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--cyan);
-      position: absolute;
-      top: calc(50% - 5px);
-      left: calc(50% - 5px);
-      box-shadow: 0 0 28px var(--cyan);
-    }
-
-    .signal {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 16px var(--green);
-      animation: signalPulse 2s infinite;
-    }
-
-    .signal.s1 { left: 27%; top: 30%; }
-    .signal.s2 { right: 26%; top: 41%; animation-delay: .5s; }
-    .signal.s3 { left: 39%; bottom: 23%; animation-delay: 1s; }
-    .signal.s4 { right: 17%; bottom: 29%; animation-delay: 1.3s; }
-
-    @keyframes signalPulse {
-      50% {
-        transform: scale(1.9);
-        opacity: .4;
-      }
-    }
-
-    /* CONTROLS */
-
-    .section {
-      padding: 85px 0;
-    }
-
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 20px;
-      margin-bottom: 28px;
-    }
-
-    .section-head h2 {
-      font-size: clamp(1.8rem, 4vw, 3rem);
-      letter-spacing: -.05em;
-    }
-
-    .section-head p {
-      color: var(--muted);
-      max-width: 510px;
-      line-height: 1.6;
-    }
-
-    .search-box {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 17px;
-    }
-
-    .search-box input {
-      flex: 1 1 300px;
-      min-height: 48px;
-      color: white;
-      background: rgba(255,255,255,.045);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      outline: none;
-      padding: 0 16px;
-      font-size: .95rem;
-    }
-
-    .search-box input::placeholder {
-      color: #6f7892;
-    }
-
-    .search-box input:focus {
-      border-color: rgba(139,92,246,.55);
-      box-shadow: 0 0 0 4px rgba(139,92,246,.08);
-    }
-
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .filter-btn {
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.035);
-      color: var(--muted);
-      border-radius: 100px;
-      padding: 9px 13px;
-      cursor: pointer;
-      font-size: .8rem;
-      font-weight: 700;
-      transition: .2s;
-    }
-
-    .filter-btn:hover,
-    .filter-btn.active {
-      background: rgba(139,92,246,.13);
-      color: #fff;
-      border-color: rgba(139,92,246,.35);
-    }
-
-    /* EVENTS */
-
-    .events-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 17px;
-    }
-
-    .event-card {
-      position: relative;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px;
-      overflow: hidden;
-      transition: .25s;
-      backdrop-filter: blur(14px);
-    }
-
-    .event-card::before {
-      content: "";
-      position: absolute;
-      width: 170px;
-      height: 170px;
-      top: -110px;
-      right: -80px;
-      background: var(--purple);
-      filter: blur(70px);
-      opacity: .11;
-      pointer-events: none;
-    }
-
-    .event-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(139,92,246,.27);
-      box-shadow: 0 20px 50px rgba(0,0,0,.2);
-    }
-
-    .event-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .type-badge {
-      padding: 6px 9px;
-      border-radius: 8px;
-      background: rgba(34,211,238,.08);
-      border: 1px solid rgba(34,211,238,.15);
-      color: #84ecf8;
-      font-size: .7rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-    }
-
-    .save-btn {
-      width: 35px;
-      height: 35px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      color: #8590ac;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: .2s;
-    }
-
-    .save-btn:hover,
-    .save-btn.saved {
-      color: #ffd166;
-      border-color: rgba(255,209,102,.25);
-      background: rgba(255,209,102,.06);
-    }
-
-    .event-card h3 {
-      font-size: 1.2rem;
-      line-height: 1.25;
-      margin-bottom: 10px;
-      letter-spacing: -.025em;
-    }
-
-    .event-description {
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: .83rem;
-      min-height: 66px;
-    }
-
-    .meta {
-      display: grid;
-      gap: 8px;
-      margin-top: 19px;
-      padding-top: 15px;
-      border-top: 1px solid rgba(255,255,255,.06);
-    }
-
-    .meta-row {
-      display: flex;
-      gap: 9px;
-      align-items: center;
-      color: #b6bed3;
-      font-size: .78rem;
-    }
-
-    .meta-row span {
-      color: #6e7792;
-    }
-
-    .signal-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 15px;
-    }
-
-    .signal-tag {
-      font-size: .66rem;
-      padding: 5px 8px;
-      border-radius: 7px;
-      background: rgba(255,255,255,.045);
-      color: #aab3c9;
-    }
-
-    .event-footer {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: center;
-      margin-top: 19px;
-    }
-
-    .source {
-      color: #6f7892;
-      font-size: .7rem;
-    }
-
-    .view-btn {
-      text-decoration: none;
-      color: white;
-      font-size: .76rem;
-      font-weight: 800;
-      padding: 8px 11px;
-      border-radius: 9px;
-      background: rgba(139,92,246,.12);
-      border: 1px solid rgba(139,92,246,.18);
-    }
-
-    /* STATS */
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-top: 22px;
-    }
-
-    .stat {
-      background: rgba(255,255,255,.025);
-      border: 1px solid var(--border);
-      padding: 18px;
-      border-radius: 16px;
-    }
-
-    .stat .number {
-      font-size: 1.8rem;
-      font-weight: 900;
-      letter-spacing: -.04em;
-    }
-
-    .stat p {
-      color: var(--muted);
-      font-size: .78rem;
-      margin-top: 3px;
-    }
-
-    /* SOURCE SECTION */
-
-    .sources-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 11px;
-    }
-
-    .source-card {
-      padding: 15px;
-      border-radius: 15px;
-      background: rgba(255,255,255,.025);
-      border: 1px solid var(--border);
-      transition: .2s;
-    }
-
-    .source-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(139,92,246,.3);
-    }
-
-    .source-card strong {
-      font-size: .87rem;
-    }
-
-    .source-card p {
-      margin-top: 5px;
-      font-size: .72rem;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-
-    /* FOOTER */
-
-    footer {
-      padding: 35px 0 55px;
-      border-top: 1px solid rgba(255,255,255,.06);
-      color: var(--muted);
-      font-size: .78rem;
-    }
-
-    .footer-inner {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    /* EMPTY */
-
-    .empty {
-      display: none;
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--muted);
-      border: 1px dashed rgba(255,255,255,.1);
-      border-radius: 18px;
-    }
-
-    /* MOBILE */
-
-    @media (max-width: 900px) {
-      .events-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .sources-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-
-      .stats {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .nav-links {
-        display: none;
-      }
-    }
-
-    @media (max-width: 620px) {
-      .hero {
-        padding-top: 75px;
-      }
-
-      .events-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .sources-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .stats {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .section-head {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .hero h1 {
-        font-size: 3.3rem;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HackPulse — Global Developer & Tech Event Radar</title>
+<meta name="description" content="HackPulse — immersive ATC-style radar for hackathons, coding competitions, AI, cybersecurity, developer events, investors and global tech opportunities.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050812;--panel:#0b1220;--panel2:#0e1728;--line:rgba(255,255,255,.085);--text:#f4f8ff;--muted:#8fa0bb;--cyan:#5ef6ff;--violet:#8e7cff;--pink:#ff73c8;--green:#72efaa;--orange:#ffbd73;--red:#ff7777;--blue:#7db6ff;--shadow:0 24px 90px rgba(0,0,0,.38)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--text);background:radial-gradient(circle at 80% 0%,rgba(142,124,255,.15),transparent 29%),radial-gradient(circle at 8% 17%,rgba(94,246,255,.1),transparent 25%),radial-gradient(circle at 60% 82%,rgba(255,115,200,.06),transparent 28%),var(--bg);font-family:Inter,system-ui,sans-serif;overflow-x:hidden}body:before{content:'';position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,#000,transparent 90%);z-index:-3}a{color:inherit;text-decoration:none}button,input,select{font:inherit}.wrap{width:min(1320px,92%);margin:auto}
+.nav{height:76px;position:sticky;top:0;z-index:100;background:rgba(5,8,18,.76);backdrop-filter:blur(20px);border-bottom:1px solid var(--line)}.navin{height:100%;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;gap:11px;align-items:center;font-family:'Space Grotesk';font-weight:700}.logo{width:39px;height:39px;border-radius:12px;background:conic-gradient(from 120deg,var(--cyan),var(--violet),var(--pink),var(--cyan));box-shadow:0 0 34px rgba(94,246,255,.24);position:relative}.logo:after{content:'';position:absolute;inset:8px;background:#09111f;border-radius:9px}.navlinks{display:flex;gap:18px;color:var(--muted);font-size:12px}.navlinks a:hover{color:#fff}.rightnav{display:flex;align-items:center;gap:9px}.live{display:flex;align-items:center;gap:7px;padding:8px 11px;border-radius:999px;background:rgba(114,239,170,.07);border:1px solid rgba(114,239,170,.15);font-size:10px;color:#b8f8cf}.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 14px var(--green);animation:pulse 1.7s infinite}@keyframes pulse{50%{opacity:.3;transform:scale(.7)}}.cmd{border:1px solid var(--line);background:rgba(255,255,255,.035);color:#dce7f9;border-radius:10px;padding:8px 11px;font-size:10px;cursor:pointer}
+.hero{padding:66px 0 28px;position:relative}.heroGrid{position:absolute;inset:0;pointer-events:none}.orb{position:absolute;border-radius:50%;filter:blur(85px);opacity:.16}.orb.one{width:350px;height:350px;right:-20px;top:50px;background:var(--cyan)}.orb.two{width:420px;height:420px;left:-180px;top:120px;background:var(--violet)}.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.032);font-size:10px;color:#cdd9eb;letter-spacing:.04em}.hero h1{font-family:'Space Grotesk';font-size:clamp(45px,7.4vw,95px);line-height:.96;letter-spacing:-.06em;max-width:1020px;margin:17px 0 16px}.hero h1 span{background:linear-gradient(100deg,#fff,var(--cyan),#b9adff,var(--pink));-webkit-background-clip:text;color:transparent;background-size:250% auto;animation:shift 5s linear infinite}@keyframes shift{to{background-position:250% center}}.sub{max-width:830px;color:#aebbd0;font-size:16px;line-height:1.75}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}.btn{padding:12px 15px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.035);color:#fff;cursor:pointer;font-size:12px;font-weight:700}.btn.primary{background:linear-gradient(135deg,#eaffff,#bdffff);color:#07121c;box-shadow:0 14px 38px rgba(94,246,255,.14)}
+/* preference strip */
+.interestbar{margin:22px 0 10px;background:linear-gradient(90deg,rgba(94,246,255,.045),rgba(142,124,255,.06));border:1px solid rgba(94,246,255,.12);border-radius:18px;padding:14px}.interesttop{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.interesttop b{font-family:'Space Grotesk';font-size:14px}.interesttop span{font-size:10px;color:var(--muted)}.interests{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.interest{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#aebcd1;padding:7px 9px;border-radius:999px;font-size:10px;cursor:pointer}.interest.active{background:rgba(94,246,255,.1);border-color:rgba(94,246,255,.3);color:#b9fbff}
+/* Radar / ATC */
+.atc{margin-top:30px;background:linear-gradient(145deg,rgba(10,18,31,.94),rgba(7,14,25,.92));border:1px solid rgba(94,246,255,.14);border-radius:28px;overflow:hidden;box-shadow:var(--shadow)}.atcHead{padding:17px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.atcTitle{display:flex;gap:11px;align-items:center}.atcTitle strong{font-family:'Space Grotesk';font-size:15px}.atcTitle small{display:block;color:var(--muted);font-size:9px;margin-top:2px}.mode{display:flex;gap:6px;flex-wrap:wrap}.mode span{padding:6px 8px;border-radius:8px;border:1px solid var(--line);font-size:9px;color:#9baac0}.mode .on{color:#aaffd1;background:rgba(114,239,170,.07);border-color:rgba(114,239,170,.17)}.atcBody{display:grid;grid-template-columns:1fr .36fr;gap:0}.radarStage{min-height:480px;position:relative;display:grid;place-items:center;overflow:hidden}.radar{width:min(600px,86vw);aspect-ratio:1;border-radius:50%;position:relative;background:radial-gradient(circle at center,rgba(94,246,255,.07),rgba(94,246,255,.016) 48%,transparent 69%);box-shadow:inset 0 0 100px rgba(94,246,255,.035),0 0 80px rgba(94,246,255,.035)}.ring{position:absolute;inset:5%;border:1px solid rgba(94,246,255,.16);border-radius:50%}.ring.r2{inset:21%}.ring.r3{inset:37%}.ring.r4{inset:49%}.axis.x,.axis.y{position:absolute;background:rgba(94,246,255,.1)}.axis.x{left:0;right:0;top:50%;height:1px}.axis.y{top:0;bottom:0;left:50%;width:1px}.quadrant{position:absolute;color:#6f8b9f;font-size:8px;letter-spacing:.07em;text-transform:uppercase}.q1{top:10%;left:52%}.q2{top:10%;left:14%}.q3{bottom:10%;left:14%}.q4{bottom:10%;left:52%}.sweep{position:absolute;left:50%;top:50%;width:50%;height:2px;transform-origin:left center;background:linear-gradient(90deg,rgba(94,246,255,.9),transparent);box-shadow:0 0 18px rgba(94,246,255,.62);animation:sweep 4.2s linear infinite}@keyframes sweep{from{transform:rotate(-16deg)}to{transform:rotate(344deg)}}.center{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--cyan);box-shadow:0 0 24px var(--cyan);left:calc(50% - 5px);top:calc(50% - 5px)}.blip{position:absolute;width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 18px currentColor;animation:blip 1.8s infinite}.blip:after{content:'';position:absolute;inset:-7px;border:1px solid currentColor;border-radius:50%;opacity:.32}.blip label{position:absolute;left:14px;top:-3px;white-space:nowrap;font-size:8px;color:#c9f6ff;background:rgba(4,9,18,.72);padding:3px 5px;border-radius:5px;border:1px solid var(--line)}@keyframes blip{50%{transform:scale(1.5);opacity:.45}}.b1{left:28%;top:32%;color:var(--green)}.b2{left:64%;top:39%;color:var(--cyan);animation-delay:.4s}.b3{left:39%;top:70%;color:var(--violet);animation-delay:.9s}.b4{left:76%;top:68%;color:var(--orange);animation-delay:1.2s}.b5{left:57%;top:18%;color:var(--pink);animation-delay:1.7s}.atcSide{border-left:1px solid var(--line);padding:17px;background:rgba(255,255,255,.012)}.sideBlock{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.055)}.sideBlock:last-child{border-bottom:0}.sideBlock h4{margin:0 0 8px;font-family:'Space Grotesk';font-size:12px}.signalList{display:grid;gap:7px}.sig{display:flex;justify-content:space-between;gap:8px;font-size:9px;color:#aebbd0}.sig b{color:#e8f3ff}.miniMeter{height:6px;border-radius:999px;background:#0a1424;overflow:hidden;margin-top:7px}.miniMeter span{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));border-radius:999px}.legend{display:flex;flex-wrap:wrap;gap:7px}.legend i{display:flex;align-items:center;gap:5px;font-style:normal;font-size:9px;color:#91a1b9}.legend i:before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 9px currentColor}
+.section{padding:42px 0}.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:18px}.sectionhead h2{font-family:'Space Grotesk';font-size:30px;letter-spacing:-.04em;margin:8px 0 0}.sectionhead p{max-width:640px;color:var(--muted);font-size:12px;line-height:1.65}
+/* featured event */
+.feature{background:linear-gradient(145deg,rgba(94,246,255,.07),rgba(142,124,255,.08) 48%,rgba(255,115,200,.05));border:1px solid rgba(94,246,255,.15);border-radius:24px;overflow:hidden;box-shadow:var(--shadow)}.featureTop{padding:18px 20px 12px;display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.badge{padding:7px 9px;border-radius:8px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.liveB{background:rgba(114,239,170,.08);color:#a9f8c9;border:1px solid rgba(114,239,170,.15)}.intl{background:rgba(142,124,255,.1);color:#d3cbff;border:1px solid rgba(142,124,255,.16)}.nat{background:rgba(94,246,255,.08);color:#aef8ff;border:1px solid rgba(94,246,255,.16)}.loc{background:rgba(255,189,115,.08);color:#ffd8aa;border:1px solid rgba(255,189,115,.14)}.featureGrid{display:grid;grid-template-columns:1.28fr .72fr;gap:20px;padding:7px 20px 20px}.featureTitle{font-family:'Space Grotesk';font-size:39px;line-height:1.03;letter-spacing:-.045em;margin:8px 0 10px}.featureLead{color:#b4c2d7;font-size:13px;line-height:1.78}.tags{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}.tag{font-size:9px;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,.04);color:#aab8cd;border:1px solid rgba(255,255,255,.055)}.detailGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:14px}.detail{padding:10px;border:1px solid rgba(255,255,255,.055);border-radius:11px;background:rgba(0,0,0,.13)}.detail b{display:block;font-size:10px}.detail span{display:block;color:var(--muted);font-size:9px;line-height:1.5;margin-top:3px}.featureRight{display:grid;gap:10px}.glass{padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(5,10,19,.38)}.glass h4{font-family:'Space Grotesk';margin:0 0 10px;font-size:12px}.person{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}.person:last-child{border-bottom:0}.avatar{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#1b2840,#243c5f);display:grid;place-items:center;color:#dffcff;font-size:10px;font-weight:800}.person b{font-size:10px;display:block}.person span{color:var(--muted);font-size:8px;display:block;margin-top:2px}.eventTimeline{padding:0 20px 22px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.phase{border:1px solid rgba(255,255,255,.055);border-radius:14px;padding:11px;background:rgba(255,255,255,.016)}.phase strong{font-size:9px;color:#aaf9ff}.phase b{display:block;font-size:11px;margin:5px 0}.phase span{color:var(--muted);font-size:9px;line-height:1.5}
+/* personalized */
+.personal{display:grid;grid-template-columns:1.2fr .8fr;gap:15px}.interestResults{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.match{padding:15px;border-radius:17px;border:1px solid var(--line);background:rgba(255,255,255,.025);position:relative;overflow:hidden}.match:before{content:'';position:absolute;right:-50px;top:-50px;width:130px;height:130px;background:var(--violet);filter:blur(55px);opacity:.11}.match h3{font-size:16px;margin:7px 0}.match p{font-size:10px;line-height:1.6;color:var(--muted)}.matchMeta{margin-top:11px;display:flex;gap:6px;flex-wrap:wrap}.mchip{font-size:8px;padding:5px 7px;border-radius:7px;background:rgba(94,246,255,.06);color:#aaf8ff}.why{margin-top:10px;padding:9px 10px;border-radius:10px;background:rgba(114,239,170,.05);border:1px solid rgba(114,239,170,.11);color:#bdf8d0;font-size:9px;line-height:1.5}.prefCard{padding:18px;border:1px solid var(--line);border-radius:17px;background:linear-gradient(150deg,rgba(142,124,255,.06),rgba(255,255,255,.02))}.prefCard h3{font-family:'Space Grotesk';margin:0 0 6px}.prefCard p{margin:0;color:var(--muted);font-size:10px;line-height:1.65}.preflist{display:grid;gap:8px;margin-top:13px}.prefrow{display:flex;justify-content:space-between;align-items:center;padding:9px 10px;border:1px solid rgba(255,255,255,.06);border-radius:10px}.prefrow span{font-size:9px;color:var(--muted)}.prefrow b{font-size:10px;color:#e6efff}
+/* global filters */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.search{flex:1;min-width:220px;padding:12px 14px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.035);color:#fff;outline:0;font-size:11px}.select{padding:11px 12px;border-radius:11px;border:1px solid var(--line);background:#0b1321;color:#dce8fa;font-size:10px;outline:0}.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.025);color:#9eacc2;font-size:9px;cursor:pointer}.chip.active{background:#d9fbff;color:#07131d;border-color:transparent}
+.eventGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.eventCard{padding:16px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,rgba(15,24,41,.94),rgba(9,15,26,.95));transition:.22s;min-height:304px;display:flex;flex-direction:column}.eventCard:hover{transform:translateY(-4px);border-color:rgba(94,246,255,.23);box-shadow:0 20px 60px rgba(0,0,0,.22)}.topline{display:flex;justify-content:space-between;gap:8px;align-items:center}.country{font-size:8px;color:#97a8bf}.eventDate{color:#93a2ba;font-size:9px;margin:13px 0 7px}.eventCard h3{margin:0;font-family:'Space Grotesk';font-size:18px;line-height:1.15}.eventCard .org{font-size:9px;color:#b5c1d4;margin-top:6px}.overview{font-size:10px;color:var(--muted);line-height:1.58;margin-top:9px}.investor{margin-top:11px;padding:9px 10px;border-radius:10px;background:rgba(142,124,255,.05);border:1px solid rgba(142,124,255,.12);font-size:8px;color:#d3ccff;line-height:1.5}.cardfoot{margin-top:auto;padding-top:12px;display:flex;justify-content:space-between;gap:9px;align-items:center}.save{border:0;background:none;color:#8fa0b9;font-size:9px;cursor:pointer}.openbtn{font-size:9px;padding:7px 9px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.025)}
+/* classification */
+.levelGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.levelCard{padding:17px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.025)}.levelCard h3{font-family:'Space Grotesk';margin:9px 0 6px}.levelCard p{color:var(--muted);font-size:10px;line-height:1.6}.levelList{display:grid;gap:7px;margin-top:11px}.levelItem{display:flex;justify-content:space-between;gap:9px;padding:8px 9px;border-radius:9px;border:1px solid rgba(255,255,255,.055);font-size:9px}.levelItem span{color:var(--muted)}
+/* countries */
+.countryGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.countryCard{padding:13px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.022);cursor:pointer;transition:.2s}.countryCard:hover{transform:translateY(-3px);border-color:rgba(94,246,255,.2)}.flag{font-size:20px}.countryCard b{display:block;font-size:10px;margin-top:5px}.countryCard span{display:block;color:var(--muted);font-size:8px;margin-top:3px}
+/* history */
+.history{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.historyCard{padding:17px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.022)}.historyCard h3{font-family:'Space Grotesk';margin:8px 0 5px}.historyCard small{color:#75869f;font-size:8px}.historyCard p{color:#aebbd0;font-size:10px;line-height:1.65}.compare{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.compare div{padding:8px;border:1px solid rgba(255,255,255,.05);border-radius:9px}.compare b{display:block;font-size:8px}.compare span{display:block;color:var(--muted);font-size:8px;line-height:1.45;margin-top:3px}.upgrade{margin-top:9px;padding:9px 10px;border-radius:10px;background:rgba(94,246,255,.035);border:1px solid rgba(94,246,255,.1);font-size:8px;line-height:1.5;color:#b6f8ff}
+/* navigation helpers */
+.quickbar{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:80;display:flex;gap:5px;padding:6px;background:rgba(5,9,17,.78);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:999px;box-shadow:0 15px 40px rgba(0,0,0,.3)}.quickbar a{padding:8px 10px;border-radius:999px;color:#93a2ba;font-size:8px}.quickbar a:hover{background:rgba(255,255,255,.05);color:#fff}.topBtn{position:fixed;right:17px;bottom:16px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:rgba(7,12,22,.82);color:#d9e6f8;display:grid;place-items:center;cursor:pointer;z-index:81}.toast{position:fixed;right:18px;top:88px;padding:10px 13px;border-radius:11px;background:#0d1827;border:1px solid rgba(94,246,255,.18);color:#dffcff;font-size:9px;opacity:0;transform:translateY(-7px);transition:.2s;z-index:120}.toast.show{opacity:1;transform:none}.modal{position:fixed;inset:0;background:rgba(1,4,10,.72);backdrop-filter:blur(10px);z-index:150;display:none;place-items:center;padding:20px}.modal.show{display:grid}.modalBox{width:min(720px,95vw);border:1px solid var(--line);border-radius:22px;background:#0a111f;box-shadow:var(--shadow);padding:18px}.modalTop{display:flex;justify-content:space-between;gap:10px;align-items:center}.modalTop h3{font-family:'Space Grotesk';margin:0}.close{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#fff;border-radius:9px;width:32px;height:32px;cursor:pointer}.command{margin-top:12px;width:100%;padding:13px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:#fff;outline:0}.commandList{display:grid;gap:7px;margin-top:10px;max-height:280px;overflow:auto}.commandItem{padding:10px;border:1px solid rgba(255,255,255,.05);border-radius:10px;cursor:pointer}.commandItem:hover{background:rgba(94,246,255,.04)}.commandItem b{font-size:10px}.commandItem span{display:block;color:var(--muted);font-size:8px;margin-top:3px}
+footer{padding:45px 0 75px;border-top:1px solid var(--line);color:#6f819c;font-size:9px;line-height:1.7}
+@media(max-width:1050px){.atcBody{grid-template-columns:1fr}.atcSide{border-left:0;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.eventGrid{grid-template-columns:repeat(2,1fr)}.countryGrid{grid-template-columns:repeat(4,1fr)}.featureGrid{grid-template-columns:1fr}.personal{grid-template-columns:1fr}.history{grid-template-columns:1fr 1fr}.levelGrid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.navlinks{display:none}.hero{padding-top:48px}.featureTitle{font-size:31px}.eventGrid{grid-template-columns:1fr}.history{grid-template-columns:1fr}.interestResults{grid-template-columns:1fr}.eventTimeline{grid-template-columns:1fr 1fr}.countryGrid{grid-template-columns:repeat(2,1fr)}.levelGrid{grid-template-columns:1fr}.atcSide{grid-template-columns:1fr}.radarStage{min-height:390px}.quickbar{display:none}.nav{height:68px}.hero h1{font-size:47px}}
+
+/* immersive intelligence modals */
+.modalWide{width:min(980px,96vw);max-height:min(86vh,900px);overflow:auto}.modalWide::-webkit-scrollbar{width:8px}.modalWide::-webkit-scrollbar-thumb{background:#1c2940;border-radius:999px}.intelHero{display:grid;grid-template-columns:1.25fr .75fr;gap:14px;margin-top:14px}.intelHeroCard,.profileCard,.chatPanel{padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)}.intelHeroCard h4,.profileCard h4{font-family:'Space Grotesk';margin:0 0 9px;font-size:13px}.intelLead{color:#b8c6da;font-size:10px;line-height:1.7}.intelMetrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.metric{padding:9px;border:1px solid rgba(255,255,255,.06);border-radius:10px;background:rgba(0,0,0,.11)}.metric b{display:block;font-size:12px}.metric span{display:block;color:var(--muted);font-size:8px;margin-top:2px}.profileGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.profileItem{display:flex;gap:9px;align-items:flex-start;padding:10px;border:1px solid rgba(255,255,255,.055);border-radius:12px;background:rgba(255,255,255,.018);cursor:pointer;transition:.18s}.profileItem:hover{border-color:rgba(94,246,255,.25);transform:translateY(-2px)}.avatarLg{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#1b2840,#31547b);font-size:11px;font-weight:800;flex:0 0 auto}.profileItem b{font-size:10px}.profileItem span{display:block;color:var(--muted);font-size:8px;line-height:1.4;margin-top:3px}.actionRow{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.smallBtn{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#e7f2ff;padding:8px 10px;border-radius:9px;font-size:9px;cursor:pointer}.smallBtn.primary2{border-color:rgba(94,246,255,.25);background:rgba(94,246,255,.07);color:#bffbff}.cardGuestBtn{font-size:9px;padding:7px 9px;border-radius:9px;border:1px solid rgba(94,246,255,.15);background:rgba(94,246,255,.05);color:#c5fbff;cursor:pointer}.bricsLive{margin-top:14px;padding:14px;border-radius:18px;border:1px solid rgba(255,119,119,.18);background:linear-gradient(135deg,rgba(255,119,119,.06),rgba(142,124,255,.05))}.bricsLiveTop{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.bricsLive h3{font-family:'Space Grotesk';margin:7px 0 5px}.bricsLive p{color:var(--muted);font-size:9px;line-height:1.55}.chatFab{position:fixed;right:22px;bottom:67px;width:56px;height:56px;border:1px solid rgba(94,246,255,.25);border-radius:50%;background:radial-gradient(circle at 35% 25%,#bffbff,#6ae7ee 42%,#725cff 100%);color:#06121a;font-weight:900;cursor:pointer;z-index:140;box-shadow:0 0 32px rgba(94,246,255,.22),0 18px 55px rgba(0,0,0,.35);animation:floaty 3.2s ease-in-out infinite}.chatFab:before{content:'';position:absolute;inset:-7px;border:1px solid rgba(94,246,255,.16);border-radius:50%;animation:chatRing 2.2s infinite}.chatFab span{font-size:22px}@keyframes floaty{50%{transform:translateY(-5px)}}@keyframes chatRing{50%{transform:scale(1.11);opacity:.35}}.chatBox{width:min(470px,95vw);height:min(650px,82vh);display:flex;flex-direction:column}.chatHeader{display:flex;justify-content:space-between;align-items:center;gap:9px}.chatHeader small{display:block;color:var(--muted);font-size:8px;margin-top:2px}.chatBody{flex:1;overflow:auto;padding:13px 2px 4px;display:grid;gap:9px}.bubble{max-width:86%;padding:10px 12px;border-radius:14px;font-size:10px;line-height:1.6}.bot{justify-self:start;background:rgba(255,255,255,.045);border:1px solid var(--line);color:#dcecff}.user{justify-self:end;background:rgba(94,246,255,.09);border:1px solid rgba(94,246,255,.15);color:#dffcff}.chatQuick{display:flex;gap:6px;flex-wrap:wrap;padding-top:8px}.chatQuick button{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#aebed3;padding:7px 8px;border-radius:999px;font-size:8px;cursor:pointer}.chatInput{display:flex;gap:7px;margin-top:9px}.chatInput input{flex:1;padding:11px 12px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:#fff;outline:0;font-size:10px}.chatSend{width:42px;border:1px solid rgba(94,246,255,.2);background:rgba(94,246,255,.08);color:#dffcff;border-radius:11px;cursor:pointer}.sourceNote{font-size:8px;color:#73839b;margin-top:10px;line-height:1.45}.modalScrollHint{font-size:8px;color:#73839b}
+@media(max-width:700px){.intelHero{grid-template-columns:1fr}.intelMetrics{grid-template-columns:repeat(2,1fr)}.profileGrid{grid-template-columns:1fr}.modal{padding:10px}.modalBox{width:96vw;max-height:88vh}.chatFab{right:15px;bottom:70px}.chatBox{height:83vh}.featureRight .glass{min-height:unset}}
+</style>
 </head>
-
 <body>
-
-  <div class="glow one"></div>
-  <div class="glow two"></div>
-
-  <!-- NAVBAR -->
-  <nav>
-    <div class="container nav-inner">
-
-      <div class="logo">
-        <div class="logo-mark">⚡</div>
-        <span>HackPulse</span>
-      </div>
-
-      <div class="nav-links">
-        <a href="#events">Events</a>
-        <a href="#radar">Radar</a>
-        <a href="#sources">Sources</a>
-      </div>
-
-      <div class="live-pill">
-        <div class="live-dot"></div>
-        Delhi Radar Live
-      </div>
-
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <main>
-
-    <section class="hero">
-
-      <div class="container">
-
-        <div class="eyebrow">
-          ⚡ Your developer opportunity radar
-        </div>
-
-        <h1>
-          Never miss your next
-          <span>hack.</span>
-        </h1>
-
-        <p>
-          HackPulse brings hackathons, coding competitions, AI events,
-          developer meetups, workshops and tech opportunities into one
-          beautiful command center for Delhi & NCR.
-        </p>
-
-        <div class="hero-actions">
-          <a href="#events" class="btn btn-primary">
-            Explore Events →
-          </a>
-
-          <button
-            class="btn btn-secondary"
-            onclick="showSaved()"
-          >
-            ⭐ My Saved Events
-          </button>
-        </div>
-
-      </div>
-
-      <!-- RADAR -->
-      <div class="radar-wrap" id="radar">
-
-        <div class="radar">
-
-          <div class="cross-x"></div>
-          <div class="cross-y"></div>
-
-          <div class="sweep"></div>
-
-          <div class="radar-center"></div>
-
-          <div class="signal s1"></div>
-          <div class="signal s2"></div>
-          <div class="signal s3"></div>
-          <div class="signal s4"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <!-- EVENTS -->
-    <section class="section" id="events">
-
-      <div class="container">
-
-        <div class="section-head">
-
-          <div>
-            <div class="eyebrow">Live opportunity feed</div>
-            <h2>Events worth showing up for.</h2>
-          </div>
-
-          <p>
-            Discover high-signal opportunities across AI, coding,
-            cybersecurity, startups, web development and more.
-          </p>
-
-        </div>
-
-        <div class="search-box">
-
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="Search hackathons, AI, cybersecurity, coding..."
-          />
-
-        </div>
-
-        <div class="filters" id="filters">
-
-          <button class="filter-btn active" data-filter="all">
-            All
-          </button>
-
-          <button class="filter-btn" data-filter="hackathon">
-            Hackathons
-          </button>
-
-          <button class="filter-btn" data-filter="coding">
-            Coding
-          </button>
-
-          <button class="filter-btn" data-filter="ai">
-            AI / ML
-          </button>
-
-          <button class="filter-btn" data-filter="cyber">
-            Cybersecurity
-          </button>
-
-          <button class="filter-btn" data-filter="meetup">
-            Meetups
-          </button>
-
-          <button class="filter-btn" data-filter="career">
-            Career
-          </button>
-
-        </div>
-
-        <div class="stats">
-
-          <div class="stat">
-            <div class="number" id="totalCount">8</div>
-            <p>Events tracked</p>
-          </div>
-
-          <div class="stat">
-            <div class="number">06</div>
-            <p>High-signal events</p>
-          </div>
-
-          <div class="stat">
-            <div class="number">04</div>
-            <p>AI opportunities</p>
-          </div>
-
-          <div class="stat">
-            <div class="number">24/7</div>
-            <p>Opportunity radar</p>
-          </div>
-
-        </div>
-
-        <br />
-
-        <div class="events-grid" id="eventsGrid"></div>
-
-        <div class="empty" id="emptyState">
-          No events matched your search.
-        </div>
-
-      </div>
-
-    </section>
-
-    <!-- SOURCES -->
-    <section class="section" id="sources">
-
-      <div class="container">
-
-        <div class="section-head">
-          <div>
-            <div class="eyebrow">Discovery network</div>
-            <h2>Where opportunities come from.</h2>
-          </div>
-
-          <p>
-            HackPulse can be expanded to aggregate opportunities
-            from the platforms developers already use.
-          </p>
-        </div>
-
-        <div class="sources-grid">
-
-          <div class="source-card">
-            <strong>Devfolio</strong>
-            <p>Hackathons & builder events</p>
-          </div>
-
-          <div class="source-card">
-            <strong>Unstop</strong>
-            <p>Competitions & campus opportunities</p>
-          </div>
-
-          <div class="source-card">
-            <strong>Devpost</strong>
-            <p>Global hackathons</p>
-          </div>
-
-          <div class="source-card">
-            <strong>MLH</strong>
-            <p>Student hacker events</p>
-          </div>
-
-          <div class="source-card">
-            <strong>Meetup</strong>
-            <p>Developer communities</p>
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-  </main>
-
-  <!-- FOOTER -->
-
-  <footer>
-
-    <div class="container footer-inner">
-
-      <div>
-        © 2026 HackPulse
-      </div>
-
-      <div>
-        Built for builders, hackers & curious minds.
-      </div>
-
-    </div>
-
-  </footer>
-
-
-  <script>
-
-    const events = [
-
-      {
-        id: 1,
-        type: "hackathon",
-        title: "NexHack 2.0",
-        description:
-          "A developer-focused hackathon built around rapid prototyping, problem solving and innovative technology.",
-        date: "25–26 Sep 2026",
-        location: "New Delhi",
-        organizer: "NexHack",
-        tags: ["AI", "Hackathon", "Build"],
-        source: "Devfolio",
-        link: "https://nexhack-2.devfolio.co/"
-      },
-
-      {
-        id: 2,
-        type: "ai",
-        title: "AI Builders Meetup",
-        description:
-          "Connect with developers and AI builders working on practical generative AI applications.",
-        date: "Coming Soon",
-        location: "Delhi NCR",
-        organizer: "AI Community",
-        tags: ["GenAI", "Networking", "LLMs"],
-        source: "Meetup",
-        link: "#"
-      },
-
-      {
-        id: 3,
-        type: "coding",
-        title: "Delhi Coding Challenge",
-        description:
-          "Competitive programming challenge focused on algorithms, problem solving and technical skills.",
-        date: "Coming Soon",
-        location: "Online",
-        organizer: "Developer Community",
-        tags: ["DSA", "Coding", "Algorithms"],
-        source: "Unstop",
-        link: "#"
-      },
-
-      {
-        id: 4,
-        type: "cyber",
-        title: "Cyber Security CTF",
-        description:
-          "Test your security skills through hands-on challenges covering web security and ethical hacking.",
-        date: "Coming Soon",
-        location: "Delhi",
-        organizer: "CyberSec Community",
-        tags: ["CTF", "Cyber", "Security"],
-        source: "Unstop",
-        link: "#"
-      },
-
-      {
-        id: 5,
-        type: "meetup",
-        title: "Delhi Developer Meetup",
-        description:
-          "An informal gathering for engineers, developers and technology enthusiasts.",
-        date: "Coming Soon",
-        location: "Gurugram",
-        organizer: "Developer Community",
-        tags: ["Networking", "Developers", "Tech"],
-        source: "Meetup",
-        link: "#"
-      },
-
-      {
-        id: 6,
-        type: "ai",
-        title: "Generative AI Hack Night",
-        description:
-          "Build experimental AI applications and learn from other builders during an intensive hack night.",
-        date: "Coming Soon",
-        location: "Delhi NCR",
-        organizer: "AI Builders",
-        tags: ["GenAI", "Agents", "LLMs"],
-        source: "Devfolio",
-        link: "#"
-      },
-
-      {
-        id: 7,
-        type: "career",
-        title: "Tech Career Connect",
-        description:
-          "Meet technology professionals, recruiters and startup builders while exploring career opportunities.",
-        date: "Coming Soon",
-        location: "Gurugram",
-        organizer: "Tech Community",
-        tags: ["Jobs", "Networking", "Startups"],
-        source: "Meetup",
-        link: "#"
-      },
-
-      {
-        id: 8,
-        type: "hackathon",
-        title: "AI Innovation Challenge",
-        description:
-          "Create an AI-powered solution to real-world problems and showcase your project to mentors.",
-        date: "Coming Soon",
-        location: "Delhi",
-        organizer: "Innovation Hub",
-        tags: ["AI", "Innovation", "Startup"],
-        source: "Devpost",
-        link: "#"
-      }
-
-    ];
-
-
-    const eventsGrid = document.getElementById("eventsGrid");
-    const searchInput = document.getElementById("searchInput");
-    const emptyState = document.getElementById("emptyState");
-    const totalCount = document.getElementById("totalCount");
-
-    let activeFilter = "all";
-
-    let savedEvents =
-      JSON.parse(localStorage.getItem("hackpulseSaved")) || [];
-
-
-    function renderEvents() {
-
-      const searchTerm =
-        searchInput.value.toLowerCase().trim();
-
-      const filtered = events.filter(event => {
-
-        const matchesFilter =
-          activeFilter === "all" ||
-          event.type === activeFilter;
-
-        const fullText = `
-          ${event.title}
-          ${event.description}
-          ${event.location}
-          ${event.organizer}
-          ${event.tags.join(" ")}
-        `.toLowerCase();
-
-        const matchesSearch =
-          fullText.includes(searchTerm);
-
-        return matchesFilter && matchesSearch;
-
-      });
-
-      eventsGrid.innerHTML = "";
-
-      totalCount.textContent = filtered.length;
-
-      if (filtered.length === 0) {
-        emptyState.style.display = "block";
-        return;
-      }
-
-      emptyState.style.display = "none";
-
-
-      filtered.forEach(event => {
-
-        const isSaved =
-          savedEvents.includes(event.id);
-
-        const card =
-          document.createElement("article");
-
-        card.className = "event-card";
-
-        card.innerHTML = `
-
-          <div class="event-top">
-
-            <div class="type-badge">
-              ${event.type}
-            </div>
-
-            <button
-              class="save-btn ${isSaved ? "saved" : ""}"
-              onclick="toggleSave(${event.id})"
-              title="Save event"
-            >
-              ${isSaved ? "★" : "☆"}
-            </button>
-
-          </div>
-
-
-          <h3>
-            ${event.title}
-          </h3>
-
-
-          <p class="event-description">
-            ${event.description}
-          </p>
-
-
-          <div class="meta">
-
-            <div class="meta-row">
-              📅
-              ${event.date}
-            </div>
-
-            <div class="meta-row">
-              📍
-              ${event.location}
-            </div>
-
-            <div class="meta-row">
-              🏢
-              ${event.organizer}
-            </div>
-
-          </div>
-
-
-          <div class="signal-row">
-
-            ${event.tags.map(tag =>
-              `<div class="signal-tag">#${tag}</div>`
-            ).join("")}
-
-          </div>
-
-
-          <div class="event-footer">
-
-            <div class="source">
-              via ${event.source}
-            </div>
-
-            <a
-              class="view-btn"
-              href="${event.link}"
-              target="_blank"
-              rel="noopener"
-            >
-              View Event →
-            </a>
-
-          </div>
-
-        `;
-
-        eventsGrid.appendChild(card);
-
-      });
-
-    }
-
-
-    function toggleSave(id) {
-
-      if (savedEvents.includes(id)) {
-
-        savedEvents =
-          savedEvents.filter(savedId => savedId !== id);
-
-      } else {
-
-        savedEvents.push(id);
-
-      }
-
-      localStorage.setItem(
-        "hackpulseSaved",
-        JSON.stringify(savedEvents)
-      );
-
-      renderEvents();
-
-    }
-
-
-    function showSaved() {
-
-      const saved =
-        events.filter(event =>
-          savedEvents.includes(event.id)
-        );
-
-      if (saved.length === 0) {
-
-        alert(
-          "You haven't saved any events yet."
-        );
-
-        return;
-      }
-
-      const names =
-        saved.map(event =>
-          `• ${event.title}`
-        ).join("\n");
-
-      alert(
-        `⭐ Your Saved Events\n\n${names}`
-      );
-
-    }
-
-
-    document
-      .querySelectorAll(".filter-btn")
-      .forEach(button => {
-
-        button.addEventListener("click", () => {
-
-          document
-            .querySelectorAll(".filter-btn")
-            .forEach(btn =>
-              btn.classList.remove("active")
-            );
-
-          button.classList.add("active");
-
-          activeFilter =
-            button.dataset.filter;
-
-          renderEvents();
-
-        });
-
-      });
-
-
-    searchInput.addEventListener(
-      "input",
-      renderEvents
-    );
-
-
-    renderEvents();
-
-  </script>
-
-</body>
-</html>
+<nav class="nav"><div class="wrap navin"><div class="brand"><div class="logo"></div><span>HackPulse</span></div><div class="navlinks"><a href="#live">Live Event</a><a href="#for-you">For You</a><a href="#global">Global Feed</a><a href="#history">Past</a></div><div class="rightnav"><div class="live"><i class="dot"></i>GLOBAL RADAR</div><button class="cmd" onclick="openCommand()">⌘ K</button></div></div></nav>
+<main>
+<section class="hero"><div class="heroGrid"><div class="orb one"></div><div class="orb two"></div></div><div class="wrap"><div class="eyebrow"><i class="dot"></i> WORLDWIDE OPPORTUNITY CONTROL CENTER</div><h1>Track the world's <span>best events.</span></h1><p class="sub">HackPulse turns the global developer-event landscape into an immersive control room. Follow hackathons, coding competitions, AI builders, cybersecurity, startups, investor gatherings and technical communities — then zoom into one event when you need the full story.</p><div class="actions"><a class="btn primary" href="#global">Explore Global Feed →</a><button class="btn" onclick="scrollToId('for-you')">Tune My Interests</button><button class="btn" onclick="openCommand()">Open Command Center</button></div>
+<div class="interestbar"><div class="interesttop"><b>YOUR INTEREST PROFILE</b><span>Selected interests rise to the top automatically and are saved in your browser.</span></div><div class="interests" id="interests"></div></div>
+<div class="atc" id="radar"><div class="atcHead"><div class="atcTitle"><div class="logo" style="width:30px;height:30px"></div><div><strong>HACKPULSE ATC RADAR</strong><small>Air-traffic-control inspired event movement · live signal simulation</small></div></div><div class="mode"><span class="on">AUTO SWEEP</span><span>WORLDWIDE</span><span>HIGH SIGNAL</span></div></div><div class="atcBody"><div class="radarStage"><div class="radar"><div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div><div class="ring r4"></div><div class="axis x"></div><div class="axis y"></div><div class="quadrant q1">ASIA / PACIFIC</div><div class="quadrant q2">EUROPE / MENA</div><div class="quadrant q3">AMERICAS</div><div class="quadrant q4">AFRICA</div><div class="sweep"></div><div class="center"></div><div class="blip b1"><label>DEL · AI</label></div><div class="blip b2"><label>SIN · CYBER</label></div><div class="blip b3"><label>NYC · STARTUP</label></div><div class="blip b4"><label>BER · CODING</label></div><div class="blip b5"><label>DXB · ENTERPRISE</label></div></div></div><aside class="atcSide"><div class="sideBlock"><h4>Radar status</h4><div class="sig"><span>Global coverage</span><b>94%</b></div><div class="miniMeter"><span style="width:94%"></span></div><div class="sig" style="margin-top:8px"><span>High-signal density</span><b>78%</b></div><div class="miniMeter"><span style="width:78%"></span></div></div><div class="sideBlock"><h4>Detected zones</h4><div class="signalList"><div class="sig"><span>🇮🇳 Delhi / NCR</span><b>12</b></div><div class="sig"><span>🇦🇪 Gulf / MENA</span><b>08</b></div><div class="sig"><span>🇸🇬 Singapore</span><b>07</b></div><div class="sig"><span>🇺🇸 USA</span><b>21</b></div><div class="sig"><span>🇩🇪 Europe</span><b>13</b></div></div></div><div class="sideBlock"><h4>Signal key</h4><div class="legend"><i style="color:var(--green)">LIVE</i><i style="color:var(--cyan)">AI</i><i style="color:var(--violet)">STARTUP</i><i style="color:var(--orange)">INVESTOR</i><i style="color:var(--pink)">ENTERPRISE</i></div></div></aside></div></div></div></section>
+
+<section class="section" id="live"><div class="wrap"><div class="sectionhead"><div><div class="eyebrow">01 · PRESENT / HAPPENING NOW</div><h2>One event. Full intelligence.</h2></div><p>The featured event is deliberately deep: history, current phase, upgrades, participants, investors, speakers, networking signals and what to watch next.</p></div>
+<div class="feature"><div class="featureTop"><div><span class="badge liveB">HAPPENING / FEATURED</span> <span class="badge intl">INTERNATIONAL</span></div><span class="country">Featured event briefing</span></div><div class="featureGrid"><div><div class="featureTitle">HackPulse Global AI Builders Summit · Live Edition</div><p class="featureLead">A presentation-ready example of the immersive event view: a multi-city AI builder gathering where teams move from technical workshops into live demos, partner sessions and investor-facing showcases. In a production version, this section should be populated from verified event feeds and organizer announcements.</p><div class="tags"><span class="tag">AI / ML</span><span class="tag">Agents</span><span class="tag">Enterprise</span><span class="tag">Startup</span><span class="tag">Investors</span><span class="tag">Networking</span></div><div class="detailGrid"><div class="detail"><b>Current phase</b><span>Demo floor + mentor / investor conversations</span></div><div class="detail"><b>Audience</b><span>Builders, founders, CTOs, product teams, operators and VCs</span></div><div class="detail"><b>Venue model</b><span>Conference floor + workshop rooms + startup showcase</span></div><div class="detail"><b>Upgrade signal</b><span>More enterprise use cases, stronger demos and investor matchmaking</span></div></div></div><div class="featureRight"><div class="glass"><h4>Speaker signals</h4><div class="person"><div class="avatar">SP</div><div><b>Speaker roster — organizer verified</b><span>Populate with confirmed names from the official event source</span></div></div><div class="person"><div class="avatar">CTO</div><div><b>Enterprise technology leaders</b><span>CTO / CIO / CDO panels and operator Q&A</span></div></div></div><div class="glass"><h4>Investor & funding signals</h4><div class="person"><div class="avatar">VC</div><div><b>Investor track</b><span>VC / angel office hours, demo review and startup matching</span></div></div><div class="person"><div class="avatar">$</div><div><b>Capital signal</b><span>Use verified investor names here once publicly announced</span></div></div></div><div class="glass"><h4>Networking heat</h4><div class="sig"><span>Builder ↔ Builder</span><b>92%</b></div><div class="miniMeter"><span style="width:92%"></span></div><div class="sig" style="margin-top:8px"><span>Founder ↔ Investor</span><b>81%</b></div><div class="miniMeter"><span style="width:81%"></span></div></div></div></div>
+<div class="eventTimeline"><div class="phase"><strong>PHASE 01</strong><b>Open / Check-in</b><span>Registration, team formation and platform onboarding.</span></div><div class="phase"><strong>PHASE 02</strong><b>Build / Learn</b><span>Hands-on workshops, mentors and technical challenge tracks.</span></div><div class="phase"><strong>PHASE 03</strong><b>Showcase / Meet</b><span>Live demos, judges, partner tables and investor office hours.</span></div><div class="phase"><strong>PHASE 04</strong><b>Next Moves</b><span>Hiring, pilots, funding conversations and community follow-up.</span></div></div></div>
+</div><div class="bricsLive"><div class="bricsLiveTop"><span class="badge liveB">🔴 LIVE BRICS EVENT</span><span class="modalScrollHint">Guest + investor intelligence</span></div><h3>BRICS Digital & AI Leadership Briefing</h3><p>A dedicated live-event intelligence shell for the BRICS track. Use the buttons to open confirmed guest, investor/partner and full event intelligence views. Names should be populated only from verified official agendas before launch.</p><div class="actionRow"><button class="smallBtn primary2" onclick="openSpecialIntel('brics')">📋 Event intelligence</button><button class="smallBtn" onclick="openSpecialProfiles('brics','guests')">👥 Guests & speakers</button><button class="smallBtn" onclick="openSpecialProfiles('brics','investors')">💼 Investors / partners</button></div></div></div></section>
+
+<section class="section" id="for-you"><div class="wrap"><div class="sectionhead"><div><div class="eyebrow">02 · PERSONALIZED LAYER</div><h2>Your interests come first.</h2></div><p>Choose the domains you care about. HackPulse moves matching events to the top without deleting the full global feed.</p></div><div class="personal"><div><div class="interestResults" id="matches"></div></div><div class="prefCard"><h3>Why this is useful</h3><p>Your profile acts like a routing rule in an ATC system: high-relevance events are surfaced earlier, while every other country and category remains searchable.</p><div class="preflist"><div class="prefrow"><span>Top interest</span><b id="topInterest">AI</b></div><div class="prefrow"><span>Preferred radius</span><b>Worldwide</b></div><div class="prefrow"><span>Levels</span><b>Local · National · International</b></div><div class="prefrow"><span>Regions</span><b>All countries</b></div></div></div></div></div></section>
+
+<section class="section" id="global"><div class="wrap"><div class="sectionhead"><div><div class="eyebrow">03 · GLOBAL EVENT FEED</div><h2>Every level. Every region. One feed.</h2></div><p>Use level, country, category and search together. The data model is ready for live APIs, RSS, organizer feeds or a backend aggregator.</p></div><div class="toolbar"><input id="search" class="search" placeholder="Search event, country, investor, organizer, AI, cybersecurity…"><select id="level" class="select"><option value="all">All levels</option><option value="Local">Local</option><option value="National">National</option><option value="International">International</option></select><select id="country" class="select"><option value="all">All countries</option></select><select id="type" class="select"><option value="all">All types</option><option value="Hackathon">Hackathon</option><option value="Competition">Competition</option><option value="Conference">Conference</option><option value="Meetup">Meetup</option><option value="Workshop">Workshop</option><option value="Summit">Summit</option></select></div><div class="chips" id="chips"><button class="chip active" data-cat="all">All</button><button class="chip" data-cat="AI / ML">AI / ML</button><button class="chip" data-cat="Coding">Coding</button><button class="chip" data-cat="Cybersecurity">Cybersecurity</button><button class="chip" data-cat="Startup">Startup</button><button class="chip" data-cat="Enterprise IT">Enterprise IT</button><button class="chip" data-cat="Web3">Web3</button><button class="chip" data-cat="Career">Career</button></div><div style="height:13px"></div><div class="eventGrid" id="eventGrid"></div></div></section>
+
+<section class="section"><div class="wrap"><div class="sectionhead"><div><div class="eyebrow">04 · CLASSIFICATION</div><h2>Understand the event scale instantly.</h2></div><p>Local means city / campus / community. National spans a country-wide audience. International crosses borders or is designed for a global audience.</p></div><div class="levelGrid"><div class="levelCard"><span class="badge loc">LOCAL</span><h3>City & community radar</h3><p>Best for accessible meetups, campus hackathons, city developer circles and nearby networking.</p><div class="levelList" id="localList"></div></div><div class="levelCard"><span class="badge nat">NATIONAL</span><h3>Country-wide opportunities</h3><p>Broader competitions, national hackathons, industry challenges and flagship domestic events.</p><div class="levelList" id="nationalList"></div></div><div class="levelCard"><span class="badge intl">INTERNATIONAL</span><h3>Global event movement</h3><p>Cross-border conferences, multinational hackathons, global startup events and international tech communities.</p><div class="levelList" id="internationalList"></div></div></div></div></section>
+
+<section class="section"><div class="wrap"><div class="sectionhead"><div><div class="eyebrow">05 · COUNTRY RADAR</div><h2>Explore events country-wise.</h2></div><p>Country chips are a navigation layer: click one to narrow the global feed without losing the rest of the world.</p></div><div class="countryGrid" id="countries"></div></div></section>
+
+<section class="section" id="history"><div class="wrap"><div class="sectionhead"><div><div class="eyebrow">06 · PAST → PRESENT → FUTURE</div><h2>What changed, and what is coming next.</h2></div><p>Historical context explains why a current event feels different: new tracks, investor participation, enterprise involvement, judging formats and technical tooling.</p></div><div class="history"><div class="historyCard"><span class="badge" style="background:rgba(255,255,255,.05);color:#9aa8be">PAST</span><h3>Earlier hackathon era</h3><small>Prototype + submission</small><p>Traditional hackathons often optimized for speed: build a prototype, submit, demo and wait for judging.</p><div class="compare"><div><b>Then</b><span>Prototype-first</span></div><div><b>Lesson</b><span>Needs stronger product thinking</span></div></div><div class="upgrade"><b>Upgrade:</b> mentorship, storytelling and real-user validation became more visible.</div></div><div class="historyCard"><span class="badge liveB">PRESENT</span><h3>Current event format</h3><small>Build + validate + connect</small><p>Modern events increasingly combine technical building with community, enterprise use cases, recruiter visibility and investor networking.</p><div class="compare"><div><b>Now</b><span>Build + network</span></div><div><b>New</b><span>Agents + enterprise AI</span></div></div><div class="upgrade"><b>Upgrade:</b> real workflows, AI agents, demo floors, mentor tracks and stronger sponsor participation.</div></div><div class="historyCard"><span class="badge intl">FUTURE</span><h3>Next-generation events</h3><small>Proof of work + global routing</small><p>Expect more cross-border teams, persistent project communities, AI-native judging, recruiter pipelines and investor matching.</p><div class="compare"><div><b>Next</b><span>Proof-of-work</span></div><div><b>Likely</b><span>Continuous communities</span></div></div><div class="upgrade"><b>Upgrade:</b> events become talent and innovation infrastructure, not only two-day competitions.</div></div></div></div></section>
+
+<section class="section"><div class="wrap"><div class="sectionhead"><div><div class="eyebrow">07 · SOURCE ARCHITECTURE</div><h2>Ready to become truly worldwide.</h2></div><p>For production, connect official APIs and event feeds rather than hard-coding data. This UI already supports the world-wide navigation model.</p></div><div class="levelGrid"><div class="levelCard"><h3>India / South Asia</h3><p>Useful source categories: university calendars, Devfolio, Unstop, community chapters and official organizer pages.</p></div><div class="levelCard"><h3>Global hackathons</h3><p>Useful source categories: Devpost, MLH, organizer RSS feeds and community platforms.</p></div><div class="levelCard"><h3>Enterprise / executive</h3><p>Useful source categories: CIO/CTO/CISO communities, vendor conferences, digital-transformation summits and official agendas.</p></div></div></div></section>
+</main>
+<div class="quickbar"><a href="#radar">RADAR</a><a href="#live">LIVE</a><a href="#for-you">FOR YOU</a><a href="#global">GLOBAL</a><a href="#history">PAST</a></div><button class="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button><div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="modalBox"><div class="modalTop"><h3>HackPulse Command Center</h3><button class="close" onclick="closeCommand()">×</button></div><input class="command" id="commandSearch" placeholder="Type: AI, Delhi, USA, cybersecurity, investor…"><div class="commandList" id="commandList"></div></div></div>
+
+<!-- Event intelligence modal -->
+<div class="modal" id="eventIntelModal" aria-hidden="true"><div class="modalBox modalWide"><div class="modalTop"><div><h3 id="intelTitle">Event intelligence</h3><div id="intelMeta" class="modalScrollHint"></div></div><button class="close" onclick="closeModal('eventIntelModal')" aria-label="Close">×</button></div><div id="intelContent"></div></div></div>
+
+<!-- Profile modal -->
+<div class="modal" id="profileModal" aria-hidden="true"><div class="modalBox modalWide"><div class="modalTop"><div><h3 id="profileTitle">Guests & speakers</h3><div id="profileMeta" class="modalScrollHint"></div></div><button class="close" onclick="closeModal('profileModal')" aria-label="Close">×</button></div><div class="profileGrid" id="profileGrid"></div><div class="sourceNote">Profile cards use verified names only when the event source publishes them. Demo placeholders are clearly labeled and should be replaced by official data before launch.</div></div></div>
+
+<!-- AI copilot -->
+<button class="chatFab" onclick="openChat()" aria-label="Open HackPulse AI Copilot"><span>✦</span></button>
+<div class="modal" id="chatModal" aria-hidden="true"><div class="modalBox chatBox"><div class="chatHeader"><div><h3>HackPulse AI Copilot</h3><small>Event discovery, filtering & intelligence assistant</small></div><button class="close" onclick="closeModal('chatModal')" aria-label="Close">×</button></div><div class="chatBody" id="chatBody"></div><div class="chatQuick"><button onclick="askAI('Show my best AI events')">Best AI events</button><button onclick="askAI('Find cybersecurity events')">Cybersecurity</button><button onclick="askAI('Show investor-heavy events')">Investor signals</button><button onclick="askAI('What is happening now?')">Happening now</button></div><div class="chatInput"><input id="chatInput" placeholder="Ask about events, guests, domains, countries…"><button class="chatSend" onclick="sendAI()">➤</button></div></div></div>
+
+<footer><div class="wrap">HackPulse · Global event intelligence UI prototype · Event records shown here are structured demo data for product design. Before launch, connect official organizer feeds/APIs and verify dates, venue, speakers and investor names.</div></footer>
+<script>
+const events=[
+{id:1,name:'NexHack 2.0',date:'Sep 25–26, 2026',country:'India',flag:'🇮🇳',city:'New Delhi',level:'National',type:'Hackathon',cats:['AI / ML','Coding','Career'],org:'Institute of Information Technology & Management',overview:'Builder-focused event with rapid prototyping, project showcase and a strong student-to-industry learning signal.',investor:'Investor signal: demo-day style exposure; add confirmed investor names from the official organizer announcement.',link:'https://nexhack-2.devfolio.co/'},
+{id:2,name:'Global AI Agent Challenge',date:'Sep 18–Oct 10, 2026',country:'Singapore',flag:'🇸🇬',city:'Singapore',level:'International',type:'Hackathon',cats:['AI / ML','Startup'],org:'Global AI Community',overview:'Agentic AI challenge built around real workflows, evaluation, tool use and production-minded demos.',investor:'Investor signal: VC office hours + startup showcase; populate named funds only after organizer confirmation.',link:'#'},
+{id:3,name:'Build $ Bank',date:'Aug 14–Sep 20, 2026',country:'India',flag:'🇮🇳',city:'Delhi NCR',level:'National',type:'Hackathon',cats:['Coding','Career'],org:'Community challenge',overview:'Compact build sprint for cloud and data projects, useful for portfolio proof-of-work.',investor:'Investor signal: partner / mentor visibility rather than a confirmed investor roster.',link:'#'},
+{id:4,name:'HackTheStack',date:'Aug 9–Sep 29, 2026',country:'India',flag:'🇮🇳',city:'New Delhi',level:'Local',type:'Hackathon',cats:['Coding','Career'],org:'Bharati Vidyapeeth University',overview:'Campus-centered practical stack-building and student collaboration opportunity.',investor:'Investor signal: ecosystem and mentor exposure; verify whether investors attend the final showcase.',link:'#'},
+{id:5,name:'NVIDIA Developer Innovation Day',date:'Oct 8, 2026',country:'United States',flag:'🇺🇸',city:'San Jose',level:'International',type:'Conference',cats:['AI / ML','Enterprise IT'],org:'NVIDIA',overview:'Developer-facing technology gathering where compute, AI platforms and enterprise adoption intersect.',investor:'Investor signal: enterprise ecosystem and partner executives; named investors should be pulled from the official agenda if announced.',link:'#'},
+{id:6,name:'European Cybersecurity Builders Forum',date:'Oct 16, 2026',country:'Germany',flag:'🇩🇪',city:'Berlin',level:'International',type:'Summit',cats:['Cybersecurity','Enterprise IT'],org:'Cybersecurity Community',overview:'Security leadership, hands-on practitioners and enterprise risk discussions with a strong technical angle.',investor:'Investor signal: cybersecurity venture ecosystem and founder networking; confirm exact fund names from event sources.',link:'#'},
+{id:7,name:'GITEX-style Enterprise Tech Summit',date:'Oct 2026',country:'United Arab Emirates',flag:'🇦🇪',city:'Dubai',level:'International',type:'Conference',cats:['Enterprise IT','Startup','AI / ML'],org:'Global Tech Community',overview:'Large enterprise technology format covering AI, cloud, cybersecurity, founders and executive networking.',investor:'Investor signal: startup showcases, venture ecosystem and corporate innovation meetings.',link:'#'},
+{id:8,name:'NYC Startup + AI Demo Night',date:'Oct 2026',country:'United States',flag:'🇺🇸',city:'New York',level:'Local',type:'Meetup',cats:['Startup','AI / ML','Career'],org:'NYC Builder Community',overview:'Founder and builder networking around AI demos, product experiments and technical recruiting.',investor:'Investor signal: angel + seed-stage office hours; verify named investors before publication.',link:'#'},
+{id:9,name:'London Coding Championship',date:'Nov 2026',country:'United Kingdom',flag:'🇬🇧',city:'London',level:'National',type:'Competition',cats:['Coding','Career'],org:'Developer League',overview:'Algorithmic competition with peer networking and technical interview preparation value.',investor:'Investor signal: primarily hiring / recruiter exposure rather than direct capital.',link:'#'},
+{id:10,name:'Toronto AI & Data Meetup',date:'Oct 2026',country:'Canada',flag:'🇨🇦',city:'Toronto',level:'Local',type:'Meetup',cats:['AI / ML','Career'],org:'Toronto AI Community',overview:'Community meetup with practical AI demos, project discussions and local networking.',investor:'Investor signal: founder and operator networking; named funds depend on the announced guest list.',link:'#'},
+{id:11,name:'Seoul Web3 Builders Week',date:'Nov 2026',country:'South Korea',flag:'🇰🇷',city:'Seoul',level:'International',type:'Conference',cats:['Web3','Startup'],org:'Web3 Builder Network',overview:'Cross-border Web3 builders, founders, protocols and developer tooling sessions.',investor:'Investor signal: venture ecosystem + protocol founder meetings; verify funds and speakers from the official roster.',link:'#'},
+{id:12,name:'Bengaluru AI Founders Meetup',date:'Sep 2026',country:'India',flag:'🇮🇳',city:'Bengaluru',level:'Local',type:'Meetup',cats:['AI / ML','Startup','Career'],org:'Bengaluru AI Community',overview:'Founder and builder meetup focused on applied AI, product experiments and early ecosystem connections.',investor:'Investor signal: angel / founder introductions; named investors should only be shown once publicly confirmed.',link:'#'}
+];
+
+const interests=['AI / ML','Coding','Cybersecurity','Startup','Enterprise IT','Web3','Career'];
+let selected=JSON.parse(localStorage.getItem('hackpulse_interests')||'[]');
+if(!selected.length)selected=['AI / ML','Coding'];
+let saved=JSON.parse(localStorage.getItem('hackpulse_saved')||'[]');
+let activeCat='all';
+const interestsEl=document.getElementById('interests');
+
+/* Rich event intelligence model. Replace demo placeholders with verified organizer data. */
+const intel={
+  1:{status:'UPCOMING / HIGH SIGNAL',venue:'New Delhi · venue announced by organizer',duration:'2 days',impact:'Student → industry builder bridge',story:'NexHack 2.0 is positioned as a builder-focused hackathon around rapid prototyping, technical execution and project showcase.',speakers:[['Organizer mentors','Technical mentors / judges','TM'],['Industry panel','Guest panel — verify official agenda','IP']],investors:[['Demo-day network','Investor exposure signal','VC'],['Startup ecosystem','Partner / mentor connections','SE']],upgrades:['More structured mentor touchpoints','Stronger demo storytelling','Potential recruiter / ecosystem visibility'],timeline:['Registration + team formation','Build + mentor loops','Demo + judging','Follow-up / showcase'],signals:['Coding + AI / ML overlap','Student-to-industry networking','Proof-of-work portfolio signal']},
+  2:{status:'DISCOVERY / VERIFY DATE',venue:'Delhi NCR',duration:'1 evening',impact:'Builder networking',story:'A practical AI-builder meetup format centered on demos, technical discussion and peer learning.',speakers:[['Community speakers','Verified names pending source','CS']],investors:[['Founder office hours','May include startup ecosystem guests','FO']],upgrades:['More practical demos','Founder/operator conversations'],timeline:['Check-in','Talks + demos','Networking'],signals:['AI builders','Networking','Practical projects']},
+  3:{status:'UPCOMING / COMPETITIVE',venue:'Online',duration:'1 challenge window',impact:'Algorithmic skill signal',story:'A coding competition format focused on algorithms, problem solving and technical evaluation.',speakers:[['Contest setters','Problem authors / evaluators','DS']],investors:[['Recruiting signal','More likely hiring than capital','HR']],upgrades:['Interview-style evaluation','Leaderboard visibility'],timeline:['Open','Solve','Leaderboard','Results'],signals:['DSA','Technical hiring','Peer benchmark']},
+  4:{status:'UPCOMING / CAMPUS',venue:'New Delhi · campus venue',duration:'Multi-week',impact:'Local project portfolio',story:'A campus-centered build-and-submit opportunity for students to turn technical ideas into visible project work.',speakers:[['Faculty mentors','Mentors / reviewers','FM']],investors:[['Ecosystem signal','Partner exposure depends on final showcase','ES']],upgrades:['Mentor checkpoints','Showcase emphasis'],timeline:['Brief','Build','Review','Showcase'],signals:['Campus','Coding','Career']},
+  5:{status:'UPCOMING / ENTERPRISE TECH',venue:'San Jose, United States',duration:'1 day',impact:'AI platform + enterprise ecosystem',story:'Developer-facing technology gathering where compute, AI platforms and enterprise adoption intersect.',speakers:[['Developer advocates','Official keynote roster should be verified','DA']],investors:[['Partner ecosystem','Enterprise / strategic ecosystem signal','PE']],upgrades:['More platform demos','Enterprise use cases'],timeline:['Keynotes','Labs','Partner sessions','Networking'],signals:['AI / ML','Enterprise IT','Platform ecosystem']},
+  6:{status:'UPCOMING / SECURITY',venue:'Berlin, Germany',duration:'1 day',impact:'Security leadership + practitioner network',story:'Security-focused event model combining practitioner learning, risk discussions and technical community networking.',speakers:[['Security practitioners','Confirmed roster pending','SC']],investors:[['Cyber venture ecosystem','Verify fund names from official source','CV']],upgrades:['Hands-on security','CISO-facing discussion'],timeline:['Briefing','Sessions','Workshop','Networking'],signals:['Cybersecurity','Enterprise IT','Risk']}
+};
+const richFallback={speakers:[['Organizer guest','Name pending official announcement','OG']],investors:[['Investor / partner','Verify from official event source','IP']]};
+
+function escapeHtml(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+function eventUrl(e){return e.link && e.link!=='#'?e.link:(sourceFallbacks[e.id]||'https://www.google.com/search?q='+encodeURIComponent(e.name+' official event'));}
+function openEvent(id){const e=events.find(x=>x.id===id);if(e)window.open(eventUrl(e),'_blank','noopener,noreferrer');}
+function renderInterests(){interestsEl.innerHTML=interests.map(i=>`<button class="interest ${selected.includes(i)?'active':''}" data-interest="${escapeHtml(i)}">${escapeHtml(i)}</button>`).join('');document.getElementById('topInterest').textContent=selected[0]||'Choose one';document.querySelectorAll('.interest').forEach(b=>b.addEventListener('click',()=>toggleInterest(b.dataset.interest)));renderMatches()}
+function toggleInterest(i){selected=selected.includes(i)?selected.filter(x=>x!==i):[...selected,i];if(!selected.length)selected=['AI / ML'];localStorage.setItem('hackpulse_interests',JSON.stringify(selected));renderInterests();render();toast(selected.includes(i)?`${i} added to your radar.`:`${i} removed from priority.`)}
+function renderMatches(){const top=events.filter(e=>selected.some(s=>e.cats.includes(s))).slice(0,4);document.getElementById('matches').innerHTML=top.map(e=>`<article class="match" tabindex="0" onclick="openEventIntel(${e.id})"><span class="badge ${e.level==='International'?'intl':e.level==='National'?'nat':'loc'}">${escapeHtml(e.level)}</span><h3>${escapeHtml(e.flag+' '+e.name)}</h3><p>${escapeHtml(e.overview)}</p><div class="matchMeta"><span class="mchip">${escapeHtml(e.date)}</span><span class="mchip">${escapeHtml(e.city)}</span><span class="mchip">${escapeHtml(e.type)}</span></div><div class="why"><b>Why it is on top:</b> matches ${escapeHtml(e.cats.filter(c=>selected.includes(c)).join(', ')||selected.join(', '))}.</div></article>`).join('')||'<div class="match"><b>No matches yet.</b></div>'}
+function renderCountries(){const counts={};events.forEach(e=>counts[e.country]=(counts[e.country]||0)+1);const map={India:'🇮🇳',Singapore:'🇸🇬','United States':'🇺🇸',Germany:'🇩🇪','United Arab Emirates':'🇦🇪','United Kingdom':'🇬🇧',Canada:'🇨🇦','South Korea':'🇰🇷'};document.getElementById('countries').innerHTML=Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([c,n])=>`<div class="countryCard" data-country="${escapeHtml(c)}"><div class="flag">${map[c]||'🌍'}</div><b>${escapeHtml(c)}</b><span>${n} tracked event${n>1?'s':''}</span></div>`).join('');document.querySelectorAll('.countryCard').forEach(x=>x.addEventListener('click',()=>chooseCountry(x.dataset.country)))}
+function renderLevels(){['Local','National','International'].forEach(level=>{const box=document.getElementById(level.toLowerCase()+'List');if(!box)return;box.innerHTML=events.filter(e=>e.level===level).slice(0,4).map(e=>`<div class="levelItem"><b>${escapeHtml(e.name)}</b><span>${escapeHtml(e.country)}</span></div>`).join('')})}
+function renderCountriesSelect(){const select=document.getElementById('country');[...new Set(events.map(e=>e.country))].sort().forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;select.appendChild(o)})}
+function render(){const q=document.getElementById('search').value.toLowerCase();const level=document.getElementById('level').value;const country=document.getElementById('country').value;const type=document.getElementById('type').value;const list=events.filter(e=>(activeCat==='all'||e.cats.includes(activeCat))&&(level==='all'||e.level===level)&&(country==='all'||e.country===country)&&(type==='all'||e.type===type)&&([e.name,e.country,e.city,e.org,e.investor,e.cats.join(' ')].join(' ').toLowerCase().includes(q)));document.getElementById('eventGrid').innerHTML=list.map(e=>`<article class="eventCard clickable" role="link" tabindex="0" onclick="openEventIntel(${e.id})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openEventIntel(${e.id})}"><div class="topline"><span class="badge ${e.level==='International'?'intl':e.level==='National'?'nat':'loc'}">${escapeHtml(e.level)}</span><span class="country">${escapeHtml(e.flag+' '+e.country)}</span></div><div class="eventDate">${escapeHtml(e.date+' · '+e.city)}</div><h3>${escapeHtml(e.name)}</h3><div class="org">${escapeHtml(e.org)}</div><div class="overview">${escapeHtml(e.overview)}</div><div class="investor">💼 ${escapeHtml(e.investor)}</div><div class="tags">${e.cats.slice(0,3).map(c=>`<span class="tag">${escapeHtml(c)}</span>`).join('')}</div><div class="cardfoot"><button class="cardGuestBtn" onclick="event.stopPropagation();openEventIntel(${e.id})">View guests &amp; details</button><button class="save" onclick="event.stopPropagation();toggleSave(${e.id})">${saved.includes(e.id)?'★ Saved':'☆ Save'}</button><a class="openbtn" href="${escapeHtml(eventUrl(e))}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">Open official site ↗</a></div></article>`).join('')||'<div class="eventCard"><b>No matching events.</b><div class="overview">Try another country, level or category.</div></div>'}
+function toggleSave(id){saved=saved.includes(id)?saved.filter(x=>x!==id):[...saved,id];localStorage.setItem('hackpulse_saved',JSON.stringify(saved));render();toast(saved.includes(id)?'Saved to your radar.':'Removed from saved.')}
+function chooseCountry(c){document.getElementById('country').value=c;scrollToId('global');render();toast(`Filtering worldwide feed: ${c}`)}
+document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeCat=b.dataset.cat;render()}));
+['search','level','country','type'].forEach(id=>document.getElementById(id).addEventListener(id==='search'?'input':'change',render));
+function scrollToId(id){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'})}
+function toast(msg){const x=document.getElementById('toast');x.textContent=msg;x.classList.add('show');clearTimeout(window.__t);window.__t=setTimeout(()=>x.classList.remove('show'),2100)}
+
+/* Command center */
+function openCommand(){document.getElementById('modal').classList.add('show');document.getElementById('commandSearch').focus();renderCommands('')}
+function closeCommand(){document.getElementById('modal').classList.remove('show')}
+function renderCommands(q){const qq=q.toLowerCase();const arr=events.filter(e=>[e.name,e.country,e.city,e.org,e.cats.join(' '),e.investor].join(' ').toLowerCase().includes(qq)).slice(0,10);const box=document.getElementById('commandList');box.textContent='';arr.forEach(e=>{const d=document.createElement('div');d.className='commandItem';d.innerHTML=`<b>${escapeHtml(e.flag+' '+e.name)}</b><span>${escapeHtml(e.level+' · '+e.type+' · '+e.country+' · '+e.date)}</span>`;d.addEventListener('click',()=>{closeCommand();openEventIntel(e.id)});box.appendChild(d)})}
+document.getElementById('commandSearch').addEventListener('input',e=>renderCommands(e.target.value));
+
+/* Event intelligence / profiles */
+function showModal(id){const m=document.getElementById(id);m.classList.add('show');m.setAttribute('aria-hidden','false')}
+function closeModal(id){const m=document.getElementById(id);if(m){m.classList.remove('show');m.setAttribute('aria-hidden','true')}}
+function closeAllModals(){['modal','eventIntelModal','profileModal','chatModal'].forEach(closeModal)}
+function buildProfileCard(name,role,initials,kind,eventId){const d=document.createElement('div');d.className='profileItem';d.tabIndex=0;d.innerHTML='<div class="avatarLg"></div><div><b></b><span></span></div>';d.querySelector('.avatarLg').textContent=initials;d.querySelector('b').textContent=name;d.querySelector('span').textContent=role;d.addEventListener('click',()=>openPersonProfile({name,role,kind,eventId}));d.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openPersonProfile({name,role,kind,eventId})}});return d}
+function openPersonProfile(p){const modal=document.getElementById('profileModal');document.getElementById('profileTitle').textContent=p.name;document.getElementById('profileMeta').textContent=(p.kind==='investor'?'Investor / partner profile':'Guest / speaker profile');const grid=document.getElementById('profileGrid');grid.textContent='';const card=document.createElement('div');card.className='profileCard';card.innerHTML='<h4></h4><p class="intelLead"></p><div class="intelMetrics"><div class="metric"><b>Role</b><span></span></div><div class="metric"><b>Signal</b><span></span></div><div class="metric"><b>Event link</b><span>Available below</span></div><div class="metric"><b>Status</b><span>Verify from official source</span></div></div>';card.querySelector('h4').textContent=p.name;card.querySelector('.intelLead').textContent='This profile shell is designed to hold biography, role, company, speaking topic, investment focus, prior event appearances and official links.';card.querySelectorAll('.metric span')[0].textContent=p.role;card.querySelectorAll('.metric span')[1].textContent=p.kind==='investor'?'Funding / partner signal':'Speaker / knowledge signal';grid.appendChild(card);showModal('profileModal')}
+function profileListFor(e,kind){const data=intel[e.id]||richFallback;return (kind==='investors'?data.investors:data.speakers)||richFallback[kind]}
+function openSpecialProfiles(type,kind){let title=kind==='investors'?'BRICS investors & partners':'BRICS guests & speakers';document.getElementById('profileTitle').textContent=title;document.getElementById('profileMeta').textContent='Live BRICS track · names populate only from verified official agenda data';const grid=document.getElementById('profileGrid');grid.textContent='';const list=[['Official roster','Confirmed names pending organizer source','OR'],['Enterprise / government guest','Role-based signal · verify name before publishing','EG'],['Investor / partner track','Partner or capital signal · verify named participants','IP']];list.filter((_,i)=>kind==='investors'?i===2||i===1:i!==2).forEach(x=>grid.appendChild(buildProfileCard(x[0],x[1],x[2],kind,0)));showModal('profileModal')}
+function openSpecialIntel(){document.getElementById('intelTitle').textContent='BRICS Digital & AI Leadership Briefing';document.getElementById('intelMeta').textContent='LIVE · BRICS track · verification-first profile shell';const c=document.getElementById('intelContent');c.textContent='';const hero=document.createElement('div');hero.className='intelHero';hero.innerHTML='<div class="intelHeroCard"><h4>What is happening</h4><p class="intelLead"></p><div class="intelMetrics"><div class="metric"><b>Live</b><span>Current track</span></div><div class="metric"><b>BRICS</b><span>Regional / global</span></div><div class="metric"><b>AI</b><span>Core domain</span></div><div class="metric"><b>Verify</b><span>Official agenda</span></div></div></div><div class="intelHeroCard"><h4>Why users care</h4><p class="intelLead">Track guest arrivals, enterprise signals, partner announcements, investor conversations and new program features without confusing demo placeholders with confirmed people.</p></div>';hero.querySelector('.intelLead').textContent='This live BRICS panel is a structured intelligence view. Populate confirmed date, venue, guest, investor and partner details from the official event source before launch.';c.appendChild(hero);const actions=document.createElement('div');actions.className='actionRow';actions.innerHTML='<button class="smallBtn primary2">👥 Open guests & speakers</button><button class="smallBtn">💼 Open investors / partners</button>';actions.children[0].addEventListener('click',()=>openSpecialProfiles('brics','guests'));actions.children[1].addEventListener('click',()=>openSpecialProfiles('brics','investors'));c.appendChild(actions);showModal('eventIntelModal')}
+function openEventIntel(id){const e=events.find(x=>x.id===id);if(!e)return;const data=intel[id]||richFallback;document.getElementById('intelTitle').textContent=e.name;document.getElementById('intelMeta').textContent=`${e.level} · ${e.type} · ${e.country} · ${e.date}`;const c=document.getElementById('intelContent');c.textContent='';const hero=document.createElement('div');hero.className='intelHero';hero.innerHTML='<div class="intelHeroCard"><h4></h4><p class="intelLead"></p><div class="intelMetrics"><div class="metric"><b></b><span>Venue</span></div><div class="metric"><b></b><span>Format</span></div><div class="metric"><b></b><span>Impact</span></div><div class="metric"><b></b><span>Organizer</span></div></div><div class="actionRow"><button class="smallBtn primary2">👥 Guests & speakers</button><button class="smallBtn">💼 Investors / partners</button><a class="smallBtn" target="_blank" rel="noopener noreferrer">↗ Official event</a></div></div><div class="intelHeroCard"><h4>Current intelligence</h4><p class="intelLead"></p><div class="signalList"></div></div>';hero.querySelector('h4').textContent=data.status||'Event intelligence';hero.querySelector('.intelLead').textContent=data.story||e.overview;const ms=hero.querySelectorAll('.metric b');ms[0].textContent=data.venue||e.city;ms[1].textContent=data.duration||e.type;ms[2].textContent=data.impact||'Community signal';ms[3].textContent=e.org;hero.querySelectorAll('.intelLead')[1].textContent="Monitor the event's current phase, participation quality, networking intensity and any newly announced changes.";const sigBox=hero.querySelector('.signalList');(data.signals||[]).forEach((s,i)=>{const row=document.createElement('div');row.className='sig';const a=document.createElement('span');a.textContent=s;const b=document.createElement('b');b.textContent=['HIGH','MED','WATCH'][i%3];row.append(a,b);sigBox.appendChild(row)});hero.querySelectorAll('button')[0].addEventListener('click',()=>openSpecialProfilesForEvent(e.id,'guests'));hero.querySelectorAll('button')[1].addEventListener('click',()=>openSpecialProfilesForEvent(e.id,'investors'));hero.querySelector('a').href=eventUrl(e);c.appendChild(hero);
+const profiles=document.createElement('div');profiles.className='profileGrid';[['Guests / speakers','speakers'],['Investors / partners','investors']].forEach(([label,key])=>{const box=document.createElement('div');box.className='profileCard';const h=document.createElement('h4');h.textContent=label;box.appendChild(h);(data[key]||[]).forEach(x=>box.appendChild(buildProfileCard(x[0],x[1],x[2],key.slice(0,-1),e.id)));profiles.appendChild(box)});c.appendChild(profiles);
+const upgrades=document.createElement('div');upgrades.className='profileCard';upgrades.innerHTML='<h4>What changed / new features</h4><div class="intelLead"></div>';upgrades.querySelector('.intelLead').textContent=(data.upgrades||[]).join(' · ');c.appendChild(upgrades);
+const timeline=document.createElement('div');timeline.className='eventTimeline';(data.timeline||[]).forEach((x,i)=>{const ph=document.createElement('div');ph.className='phase';ph.innerHTML='<strong></strong><b></b><span></span>';ph.querySelector('strong').textContent=`PHASE ${String(i+1).padStart(2,'0')}`;ph.querySelector('b').textContent=x;ph.querySelector('span').textContent=i===0?'Entry / onboarding':i===1?'Build / learn':i===2?'Meet / showcase':'Follow-up / next moves';timeline.appendChild(ph)});c.appendChild(timeline);showModal('eventIntelModal')}
+function openSpecialProfilesForEvent(id,kind){const e=events.find(x=>x.id===id);const data=intel[id]||richFallback;document.getElementById('profileTitle').textContent=kind==='investors'?`${e.name} · investors & partners`:`${e.name} · guests & speakers`;document.getElementById('profileMeta').textContent=`${e.country} · ${e.date}`;const grid=document.getElementById('profileGrid');grid.textContent='';(kind==='investors'?data.investors:data.speakers).forEach(x=>grid.appendChild(buildProfileCard(x[0],x[1],x[2],kind.slice(0,-1),id)));showModal('profileModal')}
+
+/* AI Copilot - local assistant shell. Connect a secure backend for real model responses in production. */
+function openChat(){showModal('chatModal');if(!document.getElementById('chatBody').children.length)botSay('Hi — I am your HackPulse AI Copilot. I can help you find events by domain, country, level, date, investor signal or networking value. Try “best AI events”, “cybersecurity”, or “what is happening now?”.')}
+function botSay(text){const b=document.createElement('div');b.className='bubble bot';b.textContent=text;document.getElementById('chatBody').appendChild(b);document.getElementById('chatBody').scrollTop=999999}
+function userSay(text){const b=document.createElement('div');b.className='bubble user';b.textContent=text;document.getElementById('chatBody').appendChild(b);document.getElementById('chatBody').scrollTop=999999}
+function askAI(q){userSay(q);const s=q.toLowerCase();let res='';if(s.includes('happening')||s.includes('now')){res='The featured live layer is the place to start. The BRICS live track also has dedicated guest, investor/partner and intelligence views. Use the LIVE section to open them.'}else if(s.includes('investor')){const arr=events.filter(e=>/investor|venture|angel|partner/i.test(e.investor)).slice(0,4);res=arr.length?'Investor-signal events: '+arr.map(e=>e.name).join(', ')+'. Open an event card for detailed guest/investor intelligence.':'No investor-signal events match the current dataset.'}else{const found=events.filter(e=>[...e.cats,e.name,e.country,e.city].join(' ').toLowerCase().includes(s.replace(/show|find|best|events|event|for|my|the|about/g,'').trim())).slice(0,5);if(found.length){res='I found: '+found.map(e=>`${e.name} (${e.country}, ${e.level})`).join('; ')+'. You can open any event for the intelligence view.'}else if(s.includes('ai')){res='Best AI-oriented items currently in the feed include '+events.filter(e=>e.cats.includes('AI / ML')).slice(0,5).map(e=>e.name).join(', ')+'.'}else if(s.includes('cyber')){res='Cybersecurity matches include '+events.filter(e=>e.cats.includes('Cybersecurity')).map(e=>e.name).join(', ')+'.'}else{res='Try asking for a domain, country, level, investor signal or a specific event name. I can also help you tune your interest profile.'}}setTimeout(()=>botSay(res),250)}
+function sendAI(){const i=document.getElementById('chatInput');const q=i.value.trim();if(!q)return;i.value='';askAI(q)}
+document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendAI()});
+
+/* Close behavior: ESC and outside click, with safe focus restoration. */
+['modal','eventIntelModal','profileModal','chatModal'].forEach(id=>{const m=document.getElementById(id);m.addEventListener('click',e=>{if(e.target===m)closeModal(id)})});
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openCommand()}if(e.key==='Escape'){closeModal('modal');closeModal('eventIntelModal');closeModal('profileModal');closeModal('chatModal')}});
+
+renderCountriesSelect();renderCountries();renderLevels();renderInterests();render();
+</script>
+</body></html>
